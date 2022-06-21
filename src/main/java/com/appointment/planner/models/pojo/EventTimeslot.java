@@ -1,26 +1,26 @@
-package com.appointment.planner.models;
+package com.appointment.planner.models.pojo;
 
-import javax.persistence.*;
+import com.appointment.planner.models.TimeSlot;
+
 import java.util.List;
 
-@Entity
-public class Event {
+public class EventTimeslot {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-
+    long id;
     String name;
     String date;
     String location;
     boolean continues;
+    List<TimeSlot> timeSlotList;
 
-    @OneToMany(mappedBy = "event")
-    private List<TimeSlot> timeslots;
+    public void setId(long id){
+        this.id = id;
+    }
 
     public long getId() {
         return this.id;
     }
+
     public String getName() {
         return name;
     }
@@ -51,5 +51,13 @@ public class Event {
 
     public void setContinues(boolean continues) {
         this.continues = continues;
+    }
+
+    public List<TimeSlot> getTimeSlotList() {
+        return timeSlotList;
+    }
+
+    public void setTimeSlotList(List<TimeSlot> timeSlotList) {
+        this.timeSlotList = timeSlotList;
     }
 }

@@ -13,14 +13,64 @@ public class TimeSlot {
     String beginTime;
     String endTime;
     String location;
+    int amount;
 
     @ManyToOne
     private Event event;
 
-    @ManyToMany
-    @JoinTable (
-        name = "timeslot_registration",
-        joinColumns = @JoinColumn(name="timeslot_id"),
-        inverseJoinColumns = @JoinColumn(name = "person_id"))
-    Set<TimeSlot> timeSlotSet;
+    @ManyToMany(mappedBy = "joinedTimeslots")
+    Set<Person> participants;
+
+
+    public String getBeginTime() {
+        return beginTime;
+    }
+
+    public void setBeginTime(String beginTime) {
+        this.beginTime = beginTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public int getAmount() {
+        return amount;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
+    }
+
+    public Event getEvent() {
+        return event;
+    }
+
+    public void setEvent(Event event) {
+        this.event = event;
+    }
+
+    public Set<Person> getParticipants() {
+        return participants;
+    }
+
+    public void setParticipantsSet(Set<Person> participants) {
+        this.participants = participants;
+    }
+
+    public void appendparticipants(Person person) {
+        this.participants.add(person);
+    }
 }

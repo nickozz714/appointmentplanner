@@ -15,8 +15,12 @@ public class Person {
     int age;
     String role;
 
-@ManyToMany(mappedBy = "timeslot_registration")
-    Set<Person> registrations;
+@ManyToMany(cascade = CascadeType.ALL)
+@JoinTable (
+        name = "timeslot_registration",
+        joinColumns = @JoinColumn(name="person_id"),
+        inverseJoinColumns = @JoinColumn(name = "timeslot_id"))
+    Set<TimeSlot> joinedTimeslots;
 
     public String getFirstName() {
         return firstName;
