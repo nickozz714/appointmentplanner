@@ -2,6 +2,7 @@ package com.appointment.planner.api;
 
 import com.appointment.planner.models.Event;
 import com.appointment.planner.models.Person;
+import com.appointment.planner.models.pojo.ResponseType;
 import com.appointment.planner.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,36 +20,38 @@ public class PersonController {
     private PersonService personService;
 
     @GetMapping
-    public List<Person> findAll() {
-        return personService.findAll();
+    public ResponseEntity<ResponseType> findAll() {
+        ResponseType response = personService.findAll();
+        return new ResponseEntity<>(response,response.getStatusCode());
     }
 
     @GetMapping("/{id}")
-    public Optional<Person> findById(@PathVariable long id) {
-        return personService.findById(id);
+    public ResponseEntity<ResponseType> findById(@PathVariable long id) {
+        ResponseType response = personService.findById(id);
+        return new ResponseEntity<>(response,response.getStatusCode());
     }
 
     @PostMapping
-    public <S extends Person> S save(S entity) {
-        return personService.save(entity);
+    public ResponseEntity<ResponseType> save(@RequestBody Person person) {
+        ResponseType response = personService.save(person);
+        return new ResponseEntity<>(response,response.getStatusCode());
+    }
+
+    @PutMapping("/timeslot/{timeslotId}/person/{personId}")
+    public ResponseEntity<ResponseType> registerPersonToTimeSlot(@PathVariable long timeslotId, @PathVariable long personId) {
+        ResponseType response = (personService.registerToTimeslot(personId, timeslotId));
+        return new ResponseEntity<>(response,response.getStatusCode());
+    }
+
+    @DeleteMapping("/timeslot/{timeslotId}/person/{personId}")
+    public ResponseEntity<ResponseType> unregisterPersonToTimeSlot(@PathVariable long timeslotId, @PathVariable long personId) {
+        ResponseType response = (personService.unregisterToTimeslot(personId, timeslotId));
+        return new ResponseEntity<>(response,response.getStatusCode());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deletePerson(@PathVariable long id) {
-        Optional<Person> personOptional = personService.findById(id);
-        if (personOptional.isPresent()){
-            try {
-                personService.delete(personOptional.get());
-                return new ResponseEntity<>("msg: Event has been deleted", HttpStatus.OK);
-            }
-            catch (Exception e) {
-                return new ResponseEntity<>("Error:" + e,HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-        else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<ResponseType> deletePerson(@PathVariable long id) {
+       ResponseType response = personService.deleteById(id);
+       return new ResponseEntity<>(response,response.getStatusCode());
     }
-
-
 }

@@ -38,6 +38,7 @@ public class TimeslotService {
         timeslotRepository.delete(entity);
     }
 
+
     public List<TimeSlot> findByEventId(Long aLong) {
         return timeslotRepository.findByEventId(aLong);
     }

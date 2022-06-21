@@ -21,7 +21,9 @@ public class TimeSlot {
     @ManyToMany(mappedBy = "joinedTimeslots")
     Set<Person> participants;
 
-
+    public long getId() {
+        return this.id;
+    }
     public String getBeginTime() {
         return beginTime;
     }
@@ -72,5 +74,14 @@ public class TimeSlot {
 
     public void appendparticipants(Person person) {
         this.participants.add(person);
+    }
+
+    public boolean hasPlace()
+    {
+        return this.amount < this.participants.size();
+    }
+
+    public boolean placeAvailable(int amount) {
+        return (amount + this.participants.size()) <= this.amount;
     }
 }

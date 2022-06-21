@@ -23,6 +23,7 @@ public class EventService {
 
     public List<Event> findAll() {
         return eventRepository.findAll();
+
     }
 
     public <S extends Event> S save(S entity) {
@@ -33,7 +34,12 @@ public class EventService {
         return eventRepository.findById(aLong);
     }
 
+    @Transactional
     public void delete(Event entity) {
+        List<TimeSlot> timeslotList = timeslotService.findByEventId(entity.getId());
+        timeslotList.forEach(timeSlot -> {
+            timeslotService.delete(timeSlot);
+        });
         eventRepository.delete(entity);
     }
 

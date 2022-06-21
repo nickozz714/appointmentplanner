@@ -53,4 +53,16 @@ public class Person {
     public void setRole(String role) {
         this.role = role;
     }
+
+    public long getId() {
+        return id;
+    }
+
+    public Set<TimeSlot> getJoinedTimeslots() {
+        return joinedTimeslots;
+    }
+
+    public void setJoinedTimeslots(Set<TimeSlot> joinedTimeslots) {
+        this.joinedTimeslots = joinedTimeslots;
+    }
 }

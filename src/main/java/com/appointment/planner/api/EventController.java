@@ -24,7 +24,9 @@ public class EventController {
     private TimeslotService timeslotService;
 
     @GetMapping
-    public List<Event> eventList() {return eventService.findAll();}
+    public List<Event> eventList() {
+        return eventService.findAll();
+    }
 
     @GetMapping("{id}")
     public ResponseEntity<Event> getEventById(@PathVariable long id)
