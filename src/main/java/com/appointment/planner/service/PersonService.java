@@ -1,5 +1,6 @@
 package com.appointment.planner.service;
 
+import com.appointment.planner.models.Event;
 import com.appointment.planner.models.Person;
 import com.appointment.planner.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,5 +29,9 @@ public class PersonService {
 
     public boolean existsById(Long aLong) {
         return personRepository.existsById(aLong);
+    }
+
+    public void delete(Person entity) {
+        personRepository.delete(entity);
     }
 }
