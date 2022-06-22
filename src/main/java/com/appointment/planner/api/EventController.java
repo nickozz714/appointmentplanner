@@ -3,6 +3,7 @@ package com.appointment.planner.api;
 import com.appointment.planner.models.Event;
 import com.appointment.planner.models.TimeSlot;
 import com.appointment.planner.models.pojo.EventTimeslot;
+import com.appointment.planner.models.pojo.ResponseType;
 import com.appointment.planner.service.EventService;
 import com.appointment.planner.service.TimeslotService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,46 +25,33 @@ public class EventController {
     private TimeslotService timeslotService;
 
     @GetMapping
-    public List<Event> eventList() {
-        return eventService.findAll();
+    public ResponseEntity<ResponseType> eventList() {
+        ResponseType response = eventService.findAll();
+        return new ResponseEntity<>(response, response.getStatusCode());
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Event> getEventById(@PathVariable long id)
+    public ResponseEntity<ResponseType> getEventById(@PathVariable long id)
     {
-        Optional<Event> eventOptional = eventService.findById(id);
-        if (eventOptional.isPresent()){
-            return new ResponseEntity<>(eventOptional.get(), HttpStatus.OK);
-        }
-        else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        ResponseType response = eventService.findById(id);
+        return new ResponseEntity<>(response, response.getStatusCode());
     }
 
     @PostMapping
-    public Event create(@RequestBody Event event) {
-        return this.eventService.save(event);
+    public ResponseEntity<ResponseType> create(@RequestBody Event event) {
+        ResponseType response = eventService.save(event);
+        return new ResponseEntity<>(response, response.getStatusCode());
     }
 
     @PostMapping("/WithTimeslots")
-    public ResponseEntity<EventTimeslot> createEventWithTimeslots(@RequestBody EventTimeslot eventTimeslot) {
-        return new ResponseEntity<>(eventService.saveEventWithTimeslots(eventTimeslot),HttpStatus.OK);
+    public ResponseEntity<ResponseType> createEventWithTimeslots(@RequestBody EventTimeslot eventTimeslot) {
+        ResponseType response = eventService.saveEventWithTimeslots(eventTimeslot);
+        return new ResponseEntity<>(response, response.getStatusCode());
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<String> deleteEventById(@PathVariable long id) {
-        Optional<Event> eventOptional = eventService.findById(id);
-        if (eventOptional.isPresent()){
-            try {
-                eventService.delete(eventOptional.get());
-                return new ResponseEntity<>("msg: Event has been deleted",HttpStatus.OK);
-            }
-            catch (Exception e) {
-                return new ResponseEntity<>("Error:" + e,HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-        else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<ResponseType> deleteEventById(@PathVariable long id) {
+        ResponseType response = eventService.deleteEventById(id);
+        return new ResponseEntity<>(response, response.getStatusCode());
     }
 }

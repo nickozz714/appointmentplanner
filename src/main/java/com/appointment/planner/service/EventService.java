@@ -2,6 +2,7 @@ package com.appointment.planner.service;
 
 import com.appointment.planner.models.TimeSlot;
 import com.appointment.planner.models.pojo.EventTimeslot;
+import com.appointment.planner.models.pojo.ResponseType;
 import com.appointment.planner.repository.EventRepository;
 import com.appointment.planner.models.Event;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,34 +22,37 @@ public class EventService {
     @Autowired
     private TimeslotService timeslotService;
 
-    public List<Event> findAll() {
-        return eventRepository.findAll();
+    @Autowired
+    private CheckEntityService checkEntityService;
+
+    public ResponseType findAll() {
+        return new ResponseType("List of events", HttpStatus.OK,eventRepository.findAll());
 
     }
 
-    public <S extends Event> S save(S entity) {
-        return eventRepository.save(entity);
+    public ResponseType save(Event event) {
+        if (checkEntityService.isBlank(event.getName()) || checkEntityService.isNull(event.getName()) || checkEntityService.isBlank(event.getName())) {
+            return new ResponseType("Name is not specified correctly", HttpStatus.NOT_ACCEPTABLE);
+        } else if (checkEntityService.isBlank(event.getDate()) || checkEntityService.isNull(event.getDate()) || checkEntityService.isBlank(event.getDate())) {
+            return new ResponseType("Date is not specified correctly", HttpStatus.NOT_ACCEPTABLE);
+        } else if (checkEntityService.isCorrectDate(event.getDate())) {
+            return new ResponseType("Date is not formed correctly", HttpStatus.NOT_ACCEPTABLE);
+        } else {
+            return new ResponseType("OK",HttpStatus.CREATED, eventRepository.save(event));
+        }
     }
 
-    public Optional<Event> findById(Long aLong) {
-        return eventRepository.findById(aLong);
+    public ResponseType findById(Long aLong) {
+        return new ResponseType("OK",HttpStatus.FOUND,eventRepository.findById(aLong));
     }
 
-    @Transactional
-    public void delete(Event entity) {
-        List<TimeSlot> timeslotList = timeslotService.findByEventId(entity.getId());
-        timeslotList.forEach(timeSlot -> {
-            timeslotService.delete(timeSlot);
-        });
-        eventRepository.delete(entity);
-    }
 
     public boolean existsById(Long aLong) {
         return eventRepository.existsById(aLong);
     }
 
     @Transactional
-    public EventTimeslot saveEventWithTimeslots(EventTimeslot eventTimeslot) {
+    public ResponseType saveEventWithTimeslots(EventTimeslot eventTimeslot) {
         Event newEvent = new Event();
         newEvent.setName(eventTimeslot.getName());
         newEvent.setDate(eventTimeslot.getDate());
@@ -63,7 +67,7 @@ public class EventService {
             });
         }
         else {
-            throw new NullPointerException();
+            return new ResponseType("Error: Creating the new event was not successfull. Please contact an admin or try again.",HttpStatus.INTERNAL_SERVER_ERROR);
         }
         EventTimeslot returnedEventTimeslot = new EventTimeslot();
         returnedEventTimeslot.setId(targetEvent.getId());
@@ -72,8 +76,29 @@ public class EventService {
         returnedEventTimeslot.setDate(targetEvent.getDate());
         returnedEventTimeslot.setContinues(targetEvent.isContinues());
         List<TimeSlot> timeslotList;
-        timeslotList = timeslotService.findByEventId(targetEvent.getId());
+        timeslotList = (List<TimeSlot>) timeslotService.findByEventId(targetEvent.getId()).getObject();
         returnedEventTimeslot.setTimeSlotList(timeslotList);
-        return returnedEventTimeslot;
+        return new ResponseType("Succesfully saved Event with timeslots",HttpStatus.CREATED,returnedEventTimeslot);
+        }
+
+        public ResponseType deleteEventById(long id){
+            Optional<Event> eventOptional = (Optional<Event>) this.findById(id).getObject();
+            if (eventOptional.isPresent()){
+                try {
+                    Event targetEvent = eventOptional.get();
+                    List<TimeSlot> timeslotList = (List<TimeSlot>) timeslotService.findByEventId(targetEvent.getId()).getObject();
+                    timeslotList.forEach(timeSlot -> {
+                        timeslotService.delete(timeSlot);
+                    });
+                    eventRepository.delete(eventOptional.get());
+                    return new ResponseType("Event and timeslots have been deleted", HttpStatus.OK);
+                }
+                catch (Exception e) {
+                    return new ResponseType("Error:" + e, HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+            }
+            else {
+                return new ResponseType("Event not found", HttpStatus.NOT_FOUND);
+            }
         }
 }

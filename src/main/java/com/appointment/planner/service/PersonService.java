@@ -56,7 +56,7 @@ public class PersonService {
     @Transactional
     public ResponseType registerToTimeslot(long person_id, long timeslot_id) {
         Optional<Person> optionalPerson = (Optional<Person>) this.findById(person_id).getObject();
-        Optional<TimeSlot> optionalTimeSlot = timeslotService.findById(timeslot_id);
+        Optional<TimeSlot> optionalTimeSlot = (Optional<TimeSlot>) timeslotService.findById(timeslot_id).getObject();
         if (optionalPerson.isPresent() && optionalTimeSlot.isPresent()) {
             Person selectedPerson = optionalPerson.get();
             TimeSlot selectedTimeslot = optionalTimeSlot.get();
@@ -78,7 +78,7 @@ public class PersonService {
     @Transactional
     public ResponseType unregisterToTimeslot(long person_id, long timeslot_id) {
         Optional<Person> optionalPerson = (Optional<Person>) this.findById(person_id).getObject();
-        Optional<TimeSlot> optionalTimeSlot = timeslotService.findById(timeslot_id);
+        Optional<TimeSlot> optionalTimeSlot = (Optional<TimeSlot>) timeslotService.findById(timeslot_id).getObject();
         if (optionalPerson.isPresent() && optionalTimeSlot.isPresent()) {
             Person selectedPerson = optionalPerson.get();
             TimeSlot selectedTimeslot = optionalTimeSlot.get();

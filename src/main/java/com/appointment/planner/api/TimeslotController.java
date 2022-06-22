@@ -3,6 +3,7 @@ package com.appointment.planner.api;
 import com.appointment.planner.models.Event;
 import com.appointment.planner.models.Person;
 import com.appointment.planner.models.TimeSlot;
+import com.appointment.planner.models.pojo.ResponseType;
 import com.appointment.planner.service.PersonService;
 import com.appointment.planner.service.TimeslotService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,60 +25,44 @@ public class TimeslotController {
     private PersonService personService;
 
     @GetMapping
-    public List<TimeSlot> getTimeslotList() {
-        return timeslotService.findAll();
+    public ResponseEntity<ResponseType> getTimeslotList() {
+        ResponseType response = timeslotService.findAll();
+        return new ResponseEntity<>(response, response.getStatusCode());
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<TimeSlot> getTimeSlotById(@PathVariable long id) {
-        Optional<TimeSlot> timeslotOptional = timeslotService.findById(id);
-        return timeslotOptional.map(timeSlot -> new ResponseEntity<>(timeSlot, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    public ResponseEntity<ResponseType> getTimeSlotById(@PathVariable long id) {
+        ResponseType response = timeslotService.findById(id);
+        return new ResponseEntity<>(response, response.getStatusCode());
     }
 
     @GetMapping("/event/{id}")
-    public List<TimeSlot> getTimeSlotByEventId(@PathVariable long id) {
-        return timeslotService.findByEventId(id);
+    public ResponseEntity<ResponseType> getTimeSlotByEventId(@PathVariable long id) {
+        ResponseType response = timeslotService.findByEventId(id);
+        return new ResponseEntity<>(response, response.getStatusCode());
+
     }
 
     @PostMapping
-    public TimeSlot create(@RequestBody TimeSlot timeslot) {
-        return this.timeslotService.save(timeslot);
+    public ResponseEntity<ResponseType> create(@RequestBody TimeSlot timeslot) {
+        ResponseType response = timeslotService.save(timeslot);
+        return new ResponseEntity<>(response, response.getStatusCode());
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<String> deleteTimeSlotById(@PathVariable long id) {
-        Optional<TimeSlot> timeslotOptional = timeslotService.findById(id);
-        if (timeslotOptional.isPresent()){
-            try {
-                timeslotService.delete(timeslotOptional.get());
-                return new ResponseEntity<>("msg: Event has been deleted",HttpStatus.OK);
-            }
-            catch (Exception e) {
-                return new ResponseEntity<>("Error:" + e,HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-        else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<ResponseType> deleteTimeSlotById(@PathVariable long id) {
+        ResponseType response = timeslotService.deleteById(id);
+        return new ResponseEntity<>(response, response.getStatusCode());
+
+
     }
 
-    @PutMapping("{timeslot_id}/{person_id}")
-    public ResponseEntity<TimeSlot> putPersonInTimeslot(@PathVariable long timeslot_id,@PathVariable long person_id) {
-        Optional<TimeSlot> timeslotOptional = timeslotService.findById(timeslot_id);
-        if (timeslotOptional.isPresent() && personService.existsById(person_id)) {
-            try {
-                Person selectedPerson = personService.findById(person_id).get();
-                TimeSlot targetTimeslot = timeslotOptional.get();
-                targetTimeslot.appendparticipants(selectedPerson);
-                return new ResponseEntity<>(timeslotService.save(targetTimeslot), HttpStatus.OK);
-            } catch (Exception e) {
-                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-            else {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-    }
+//    @PutMapping("{timeslot_id}/{person_id}")
+//    public ResponseEntity<ResponseType> putPersonInTimeslot(@PathVariable long timeslot_id,@PathVariable long person_id) {
+//        ResponseType response = timeslotService.putPersonInTimeslot(timeslot_id, person_id);
+//        return new ResponseEntity<>(response, response.getStatusCode());
+//
+//    }
 
 
 }
