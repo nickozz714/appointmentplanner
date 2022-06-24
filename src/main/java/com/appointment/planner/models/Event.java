@@ -21,6 +21,8 @@ public class Event {
     public long getId() {
         return this.id;
     }
+
+    public void setId(long id) {this.id = id;}
     public String getName() {
         return name;
     }
@@ -51,5 +53,13 @@ public class Event {
 
     public void setContinues(boolean continues) {
         this.continues = continues;
+    }
+
+    public List<TimeSlot> getTimeslots() {
+        return timeslots;
+    }
+
+    public void setTimeslots(List<TimeSlot> timeslots) {
+        this.timeslots = timeslots;
     }
 }

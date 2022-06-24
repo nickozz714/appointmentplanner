@@ -15,9 +15,10 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("api/event")
+@RequestMapping(EventController.url)
 public class EventController {
 
+    public static final String url = "/api/events";
     @Autowired
     private EventService eventService;
 

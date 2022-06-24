@@ -7,6 +7,7 @@ public class ResponseType {
     private HttpStatus statusCode;
     private Object object;
 
+    public ResponseType (){}
     public ResponseType (String message, HttpStatus statusCode, Object object) {
         this.message = message;
         this.statusCode = statusCode;
@@ -17,7 +18,6 @@ public class ResponseType {
         this.message = message;
         this.statusCode = statusCode;
     }
-
 
     public String getMessage() {
         return message;

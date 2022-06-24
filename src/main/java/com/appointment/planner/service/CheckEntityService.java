@@ -24,9 +24,8 @@ public class CheckEntityService {
 
     public boolean isCorrectDate(String dateString) {
         try {
-            DateTimeFormatter strictDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-                    .withResolverStyle(ResolverStyle.STRICT);
-            LocalDate.parse(dateString, strictDateFormatter);
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            LocalDate.parse(dateString, dateTimeFormatter);
             return true;
         }catch (DateTimeParseException | NullPointerException e) {
             return false;

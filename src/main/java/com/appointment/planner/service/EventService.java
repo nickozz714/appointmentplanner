@@ -31,11 +31,11 @@ public class EventService {
     }
 
     public ResponseType save(Event event) {
-        if (checkEntityService.isBlank(event.getName()) || checkEntityService.isNull(event.getName()) || checkEntityService.isBlank(event.getName())) {
+        if (checkEntityService.isBlank(event.getName()) || checkEntityService.isNull(event.getName())) {
             return new ResponseType("Name is not specified correctly", HttpStatus.NOT_ACCEPTABLE);
-        } else if (checkEntityService.isBlank(event.getDate()) || checkEntityService.isNull(event.getDate()) || checkEntityService.isBlank(event.getDate())) {
+        } else if (checkEntityService.isBlank(event.getDate()) || checkEntityService.isNull(event.getDate())) {
             return new ResponseType("Date is not specified correctly", HttpStatus.NOT_ACCEPTABLE);
-        } else if (checkEntityService.isCorrectDate(event.getDate())) {
+        } else if (!checkEntityService.isCorrectDate(event.getDate())) {
             return new ResponseType("Date is not formed correctly", HttpStatus.NOT_ACCEPTABLE);
         } else {
             return new ResponseType("OK",HttpStatus.CREATED, eventRepository.save(event));
